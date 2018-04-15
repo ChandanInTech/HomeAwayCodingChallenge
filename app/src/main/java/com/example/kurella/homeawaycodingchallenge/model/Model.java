@@ -4,7 +4,12 @@ import android.util.Log;
 
 import com.example.kurella.homeawaycodingchallenge.contractor.Contractor;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import retrofit2.Call;
@@ -16,6 +21,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class Model implements Contractor.Model {
     Contractor.Presenter presenter;
     static Model model = null;
+    SimpleDateFormat requiredDF = new SimpleDateFormat("EEE, d MMM yyyy hh:mm aaa");
+    SimpleDateFormat givenDF = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+
 
     public Model(Contractor.Presenter presenter) {
         this.presenter = presenter;
@@ -58,9 +66,18 @@ public class Model implements Contractor.Model {
                             isFav = true;
                         }
                     }
+
+                    Date t = new Date();
+                    try {
+                        t = givenDF.parse(event.getDatetime_utc());
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+
                     rvData.add(new RvItemPojo(event.getTitle(),
                             event.getVenue().getDisplay_location(),
-                            event.getDatetime_utc(),
+//                            event.getDatetime_utc(),
+                            requiredDF.format(t),
                             event.getId(),
                             event.getPerformers()[0].getImage(),
                             event.getShort_title(),
